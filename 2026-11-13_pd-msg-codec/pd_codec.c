@@ -16,9 +16,14 @@ void pd_header_unpack(uint16_t raw, pd_header_t *h){
     h->msg_type = raw & 0x1FU;
 }
 uint8_t pdo_type(uint32_t pdo){ 
-    
+    return ((pdo >> 30) & 0x03);
 }
-uint32_t pdo_fixed_pack(const pd_fixed_pdo_t *p){ (void)p; /* TODO */ return 0; }
+uint32_t pdo_fixed_pack(const pd_fixed_pdo_t *p){ 
+    return ((uint32_t) (p->dual_role_power >> 29) & 0x01U | (uint32_t) (p->usb_suspend >> 28) & 0x01U | 
+        (uint32_t) (p->unconstrained >> 27) & 0x01U | (uint32_t) (p->usb_comm >> 26) & 0x01U | (uint32_t) (p->dual_role_data >> 25) & 0x01U |
+        (uint32_t) (p->unchunked >> 24) & 0x01U | (uint32_t) (p->epr_capable >> 23) & 0x01U | (uint32_t) (p->peak_current >> 20) & 0x03U |
+        (uint32_t) (p->voltage_mv >> 10) & 0x3FFU | (uint32_t) (p->current_ma & 0x3FFU));
+}
 void pdo_fixed_unpack(uint32_t raw, pd_fixed_pdo_t *p){ (void)raw; (void)p; /* TODO */ }
 uint32_t pdo_pps_pack(const pd_pps_apdo_t *p){ (void)p; /* TODO: 注意 bit31:30 = 11 */ return 0; }
 void pdo_pps_unpack(uint32_t raw, pd_pps_apdo_t *p){ (void)raw; (void)p; /* TODO */ }
